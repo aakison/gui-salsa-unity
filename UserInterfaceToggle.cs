@@ -5,8 +5,8 @@ namespace Relentless {
 
     public class UserInterfaceToggle : MonoBehaviour {
 
-        [Tooltip("The abstract input that triggers this toggle")]
-        public CustomInputCode input;
+        [Tooltip("The abstract input that triggers this toggle as defined by the InputManager")]
+        public string input;
 
         [Tooltip("The UI game object that is activated during this toggle")]
         public GameObject target;
@@ -25,8 +25,8 @@ namespace Relentless {
         }
 
         internal void Update() {
-            var match = CustomInput.GetInput(input);
-            var escape = escapeToCancel && CustomInput.GetInput(CustomInputCode.Escape);
+            var match = Input.GetButtonDown(input);
+            var escape = escapeToCancel && Input.GetButtonDown("Cancel");
             if((escape || match) && target.activeSelf) { // dismissing UI doesn't require capture,
                 target.SetActive(false);
                 return;
