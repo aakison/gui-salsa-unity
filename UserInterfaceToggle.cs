@@ -29,14 +29,14 @@ namespace Relentless {
 
         internal void Update() {
             var match = Input.GetKeyDown(key);
-            var escape = escapeToCancel && Input.GetKeyDown(KeyCode.Escape);
+            var escape = false; //escapeToCancel && Input.GetKeyDown(KeyCode.Escape);
             if((escape || match) && target.activeSelf) { // dismissing UI doesn't require capture,
                 target.SetActive(false);
                 return;
             }
-            if(respectsKeyCapture && CustomInput.IsCaptured()) {
-                return;
-            }
+            //if(respectsKeyCapture && CustomInput.IsCaptured()) {
+            //    return;
+            //}
             if(match && !target.activeSelf) { // but enabling it does.
                 target.SetActive(true);
             }
