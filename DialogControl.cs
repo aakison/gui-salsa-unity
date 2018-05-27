@@ -60,7 +60,13 @@ public class DialogControl : MonoBehaviour {
     }
 
     private void Start() {
-        transform.position = startPosition == StartPosition.Hidden ? hidePosition : showPosition;
+        if(startPosition == StartPosition.Hidden) {
+            MoveToHideTransform();
+        }
+        else {
+            MoveToShowTransform();
+        }
+        ShowHideChildren(startPosition == StartPosition.Shown);
         position = startPosition;
     }
 
