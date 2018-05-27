@@ -4,13 +4,18 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class DialogControl : MonoBehaviour {
 
     [Tooltip("The amount of time it takes to transition from one state to another.")]
     public float duration = 0.5f;
 
+    [Tooltip("The position that the dialog starts in when first loaded (in `Start()`)")]
     public StartPosition startPosition = StartPosition.Hidden;
+
+    [Tooltip("The optional `Selectable` to highlight when dialog is shown.")]
+    public Selectable selectedOnShow;
 
     private StartPosition position;
 
@@ -73,6 +78,7 @@ public class DialogControl : MonoBehaviour {
         transform.DOScale(showScale, duration);
         yield return WaitFor.Seconds(duration);
         position = StartPosition.Shown;
+        selectedOnShow?.Select();
     }
 
     public void Hide() {
