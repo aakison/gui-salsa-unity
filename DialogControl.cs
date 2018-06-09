@@ -2,7 +2,6 @@
 using Salsa;
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -16,6 +15,9 @@ public class DialogControl : MonoBehaviour {
 
     [Tooltip("The optional `Selectable` to highlight when dialog is shown.")]
     public Selectable selectedOnShow;
+
+    [Tooltip("An optional image which is enabled and siabled with the dialog.  Can obscure background controls, add watermarks, etc.")]
+    public Image background;
 
     private StartPosition position;
 
@@ -82,6 +84,9 @@ public class DialogControl : MonoBehaviour {
         transform.DOMove(showPosition, duration, true);
         transform.DORotate(showRotation, duration);
         transform.DOScale(showScale, duration);
+        if(background != null) {
+            background.DOColor(background.color.Opaque(), duration);
+        }
         yield return WaitFor.Seconds(duration);
         position = StartPosition.Shown;
         selectedOnShow?.Select();
@@ -98,6 +103,9 @@ public class DialogControl : MonoBehaviour {
         transform.DOMove(hidePosition, duration, true);
         transform.DORotate(hideRotation, duration);
         transform.DOScale(hideScale, duration);
+        if(background != null) {
+            background.DOColor(background.color.Transparent(), duration);
+        }
         yield return WaitFor.Seconds(duration);
         ShowHideChildren(false);
         position = StartPosition.Hidden;
@@ -130,6 +138,7 @@ public class DialogControl : MonoBehaviour {
         for(int i = 0; i < transform.childCount; ++i) {
             transform.GetChild(i).gameObject.SetActive(active);
         }
+        background?.gameObject?.SetActive(active);
     }
 
 }
