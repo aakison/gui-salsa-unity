@@ -21,26 +21,42 @@ public class DialogControl : MonoBehaviour {
 
     private StartPosition position;
 
+    private RectTransform rect;
+
     [Header("Show Transform (use menu)")]
-    public Vector3 showPosition;
     public Vector3 showRotation;
     public Vector3 showScale;
+    public Vector2 showSizeDelta;
+    public Vector2 showOffsetMin;
+    public Vector2 showOffsetMax;
 
     [Header("Hide Transform (use menu)")]
-    public Vector3 hidePosition;
     public Vector3 hideRotation;
     public Vector3 hideScale;
+    public Vector2 hideSizeDelta;
+    public Vector2 hideOffsetMin;
+    public Vector2 hideOffsetMax;
+
+    private void Awake() {
+        rect = GetComponent<RectTransform>();
+    }
 
     [ContextMenu("Set Show Transform")]
     public void SetShowTransform() {
-        showPosition = transform.position;
+        var rect = GetComponent<RectTransform>();
+        showSizeDelta = rect.sizeDelta;
+        showOffsetMin = rect.offsetMin;
+        showOffsetMax = rect.offsetMax;
         showRotation = transform.rotation.eulerAngles;
         showScale = transform.localScale;
     }
 
     [ContextMenu("Move to Show Transform")]
     public void MoveToShowTransform() {
-        transform.position = showPosition;
+        var rect = GetComponent<RectTransform>();
+        rect.sizeDelta = showSizeDelta;
+        rect.offsetMin = showOffsetMin;
+        rect.offsetMax = showOffsetMax;
         transform.rotation = Quaternion.Euler(showRotation);
         transform.localScale = showScale;
         position = StartPosition.Shown;
@@ -48,14 +64,20 @@ public class DialogControl : MonoBehaviour {
 
     [ContextMenu("Set Hide Transform")]
     public void SetHideTransform() {
-        hidePosition = transform.position;
+        var rect = GetComponent<RectTransform>();
+        hideSizeDelta = rect.sizeDelta;
+        hideOffsetMin = rect.offsetMin;
+        hideOffsetMax = rect.offsetMax;
         hideRotation = transform.rotation.eulerAngles;
         hideScale = transform.localScale;
     }
 
     [ContextMenu("Move to Hide Transform")]
     public void MoveToHideTransform() {
-        transform.position = hidePosition;
+        var rect = GetComponent<RectTransform>();
+        rect.sizeDelta = hideSizeDelta;
+        rect.offsetMin = hideOffsetMin;
+        rect.offsetMax = hideOffsetMax;
         transform.rotation = Quaternion.Euler(hideRotation);
         transform.localScale = hideScale;
         position = StartPosition.Hidden;
@@ -81,9 +103,12 @@ public class DialogControl : MonoBehaviour {
     private IEnumerator ShowCo() {
         position = StartPosition.Moving;
         ShowHideChildren(true);
-        transform.DOMove(showPosition, duration, true);
+        var endTime = duration + Time.time;
         transform.DORotate(showRotation, duration);
         transform.DOScale(showScale, duration);
+        DOTween.To(() => rect.sizeDelta, e => rect.sizeDelta = e, showSizeDelta, duration);
+        DOTween.To(() => rect.offsetMin, e => rect.offsetMin = e, showOffsetMin, duration);
+        DOTween.To(() => rect.offsetMax, e => rect.offsetMax = e, showOffsetMax, duration);
         if(background != null) {
             background.DOColor(background.color.Opaque(), duration);
         }
@@ -100,9 +125,11 @@ public class DialogControl : MonoBehaviour {
 
     private IEnumerator HideCo() {
         position = StartPosition.Moving;
-        transform.DOMove(hidePosition, duration, true);
         transform.DORotate(hideRotation, duration);
         transform.DOScale(hideScale, duration);
+        DOTween.To(() => rect.sizeDelta, e => rect.sizeDelta = e, hideSizeDelta, duration);
+        DOTween.To(() => rect.offsetMin, e => rect.offsetMin = e, hideOffsetMin, duration);
+        DOTween.To(() => rect.offsetMax, e => rect.offsetMax = e, hideOffsetMax, duration);
         if(background != null) {
             background.DOColor(background.color.Transparent(), duration);
         }
